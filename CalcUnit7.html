@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AP Calculus BC - Differential Equations Deep Dive</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false}
+            ]
+        });"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Charter', 'Georgia', serif;
+            line-height: 1.7;
+            color: #1a1a1a;
+            background: #fefefe;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            border-radius: 8px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            color: #0066cc;
+            margin-bottom: 0.3em;
+            border-bottom: 4px solid #0066cc;
+            padding-bottom: 0.3em;
+            font-weight: 700;
+        }
+        
+        h2 {
+            font-size: 1.8em;
+            color: #2c5282;
+            margin-top: 1.8em;
+            margin-bottom: 0.6em;
+            font-weight: 600;
+            border-left: 5px solid #0066cc;
+            padding-left: 15px;
+        }
+        
+        h3 {
+            font-size: 1.4em;
+            color: #1a5490;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            font-weight: 600;
+        }
+        
+        h4 {
+            font-size: 1.1em;
+            color: #2d3748;
+            margin-top: 1.2em;
+            margin-bottom: 0.4em;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 1em;
+            text-align: justify;
+        }
+        
+        .problem {
+            background: #f7fafc;
+            border-left: 5px solid #4299e1;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+        
+        .problem-header {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2c5282;
+            margin-bottom: 15px;
+        }
+        
+        .concept-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .concept-box h3 {
+            color: white;
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+        
+        .insight {
+            background: #fff5e6;
+            border-left: 5px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .insight::before {
+            content: "💡 Deep Insight: ";
+            font-weight: 700;
+            color: #e65100;
+        }
+        
+        .math-display {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+        }
+        
+        .solution-step {
+            background: #f0f9ff;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 3px solid #0284c7;
+            border-radius: 4px;
+        }
+        
+        .key-point {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 1em;
+        }
+        
+        li {
+            margin-bottom: 0.5em;
+        }
+        
+        .visual-analogy {
+            background: #e0f2fe;
+            border: 2px dashed #0284c7;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-style: italic;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #cbd5e0;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background: #2c5282;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background: #f7fafc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AP Calculus BC Unit 3: Differential Equations</h1>
+        <p style="font-size: 1.1em; color: #4a5568; margin-bottom: 2em;"><em>Deep Conceptual Understanding Guide</em></p>
+
+        <!-- PROBLEM 1 -->
+        <div class="problem">
+            <div class="problem-header">Problem 1: Euler's Method</div>
+            <p><strong>Given:</strong> $\frac{dy}{dx} = f(x, y)$ with initial condition $f(2) = y_0$</p>
+            <p><strong>Task:</strong> Use Euler's method with two equal steps to approximate $f(x)$ at a target value</p>
+        </div>
+
+        <div class="concept-box">
+            <h3>What IS Euler's Method? (The Deep Understanding)</h3>
+            <p>Imagine hiking in thick fog. You can only see the slope of the ground right where you're standing, but the path ahead is invisible. Euler's method says: "Walk in a straight line at the current slope for a small distance, check the new slope, then adjust."</p>
+        </div>
+
+        <h3>The Core Idea</h3>
+        <p>A differential equation tells you the <strong>slope</strong> at any point. If you move a tiny distance along that slope, you approximate the curve. The smaller your steps, the closer you stay to the true curve.</p>
+
+        <div class="math-display">
+            <h4>The Formula:</h4>
+            $$y_{n+1} = y_n + h \cdot f'(x_n, y_n)$$
+            <p style="margin-top: 10px;">Where:</p>
+            <ul>
+                <li>$y_{n+1}$ = new y-value (where we're going)</li>
+                <li>$y_n$ = current y-value (where we are)</li>
+                <li>$h$ = step size (how far we walk)</li>
+                <li>$f'(x_n, y_n)$ = slope at current point (from the differential equation)</li>
+            </ul>
+        </div>
+
+        <div class="solution-step">
+            <h4>Solution Process:</h4>
+            <p>Let's say we go from $x = 2$ to $x = 1$ in two steps:</p>
+            $$h = \frac{1-2}{2} = -0.5$$
+            
+            <p><strong>Step 1:</strong></p>
+            <ul>
+                <li>Start at: $(2, f(2))$</li>
+                <li>Calculate slope: $\frac{dy}{dx}\bigg|_{x=2}$</li>
+                <li>New point: $y_1 = f(2) + (-0.5) \cdot \text{(slope at } x=2)$</li>
+                <li>New x: $x_1 = 2 + (-0.5) = 1.5$</li>
+            </ul>
+            
+            <p><strong>Step 2:</strong></p>
+            <ul>
+                <li>Start at: $(1.5, y_1)$</li>
+                <li>Calculate slope: $\frac{dy}{dx}\bigg|_{x=1.5}$</li>
+                <li>Final: $y_2 = y_1 + (-0.5) \cdot \text{(slope at } x=1.5)$</li>
+                <li>Final x: $x_2 = 1.5 + (-0.5) = 1$</li>
+            </ul>
+        </div>
+
+        <div class="insight">
+            Euler's method gives <strong>linear approximations</strong> of <strong>curved paths</strong>. Error accumulates with each step. Smaller steps = less error, but more computation required.
+        </div>
+
+        <!-- PROBLEM 2 -->
+        <div class="problem">
+            <div class="problem-header">Problem 2: Solving $\frac{dy}{dx} = -2x^2$</div>
+        </div>
+
+        <h3>Part (A): Find the General Solution</h3>
+
+        <div class="key-point">
+            <strong>Recognizing the Type:</strong> This is <strong>separable</strong> because the right side has ONLY $x$ (no $y$). We can "separate" the variables.
+        </div>
+
+        <div class="math-display">
+            <h4>Solution:</h4>
+            $$\frac{dy}{dx} = -2x^2$$
+            $$dy = -2x^2 \, dx \quad \text{(multiply both sides by } dx\text{)}$$
+            $$\int dy = \int -2x^2 \, dx \quad \text{(integrate both sides)}$$
+            $$y = -2 \cdot \frac{x^3}{3} + C$$
+            $$y = -\frac{2x^3}{3} + C$$
+        </div>
+
+        <div class="concept-box">
+            <h3>The Deeper Question: Why Can We "Multiply by $dx$"?</h3>
+            <p>This is actually <strong>shorthand</strong> for a more rigorous process:</p>
+            <ol>
+                <li>$\frac{dy}{dx}$ is the derivative (a limit)</li>
+                <li>When we "multiply by $dx$," we're using the <strong>Fundamental Theorem of Calculus</strong></li>
+                <li>More precisely: $\int \frac{dy}{dx} \, dx = \int -2x^2 \, dx$</li>
+                <li>The left side simplifies to just $y$ (integration "undoes" differentiation)</li>
+            </ol>
+        </div>
+
+        <div class="insight">
+            <strong>What does "$+ C$" mean?</strong> There are <em>infinitely many</em> functions with derivative $-2x^2$. Each one is vertically shifted by some constant. $C$ represents ALL possible vertical shifts. This is the <strong>general solution</strong> — a family of curves.
+        </div>
+
+        <h3>Part (B): Find the Particular Solution with $f(1) = -1$</h3>
+
+        <div class="visual-analogy">
+            <strong>Visual Understanding:</strong> Imagine a stack of parallel curves (all shifted vertically). The initial condition is like saying "use the curve that goes through this specific point."
+        </div>
+
+        <div class="math-display">
+            <h4>Solution:</h4>
+            $$y = -\frac{2x^3}{3} + C$$
+            <p>Plug in $(1, -1)$:</p>
+            $$-1 = -\frac{2(1)^3}{3} + C$$
+            $$-1 = -\frac{2}{3} + C$$
+            $$C = -1 + \frac{2}{3} = -\frac{3}{3} + \frac{2}{3} = -\frac{1}{3}$$
+            
+            <p style="margin-top: 15px;"><strong>Particular Solution:</strong></p>
+            $$f(x) = -\frac{2x^3}{3} - \frac{1}{3}$$
+        </div>
+
+        <!-- PROBLEM 3 -->
+        <div class="problem">
+            <div class="problem-header">Problem 3: $\frac{dy}{dx} = -\frac{2x^2}{y}$</div>
+            <p><strong>This Changes Everything!</strong> Now $y$ appears in the equation.</p>
+        </div>
+
+        <h3>Part (A): Tangent Line at $(1, -1)$</h3>
+
+        <div class="key-point">
+            <strong>What You Need for a Tangent Line:</strong>
+            <ol>
+                <li>A point: $(1, -1)$ ✓ (given)</li>
+                <li>A slope: $\frac{dy}{dx}$ evaluated at that point</li>
+            </ol>
+        </div>
+
+        <div class="math-display">
+            <h4>Finding the Slope:</h4>
+            $$\frac{dy}{dx} = -\frac{2x^2}{y}$$
+            <p>At $(1, -1)$:</p>
+            $$\frac{dy}{dx}\bigg|_{(1,-1)} = -\frac{2(1)^2}{-1} = -\frac{2}{-1} = 2$$
+        </div>
+
+        <div class="math-display">
+            <h4>Tangent Line Equation:</h4>
+            <p>Point-slope form: $y - y_1 = m(x - x_1)$</p>
+            $$y - (-1) = 2(x - 1)$$
+            $$y + 1 = 2x - 2$$
+            $$y = 2x - 3$$
+        </div>
+
+        <div class="insight">
+            The differential equation is like a <strong>"slope calculator."</strong> Plug in ANY point $(x, y)$, and it tells you the slope there. The tangent line is just the line with that slope through that point.
+        </div>
+
+        <h3>Part (B): Find Particular Solution with $f(1) = -1$</h3>
+
+        <div class="concept-box">
+            <h3>Separation of Variables — The Real Process</h3>
+            <p>When $y$ appears in the equation, we need to separate $x$ terms from $y$ terms:</p>
+        </div>
+
+        <div class="math-display">
+            <h4>Step-by-Step Separation:</h4>
+            $$\frac{dy}{dx} = -\frac{2x^2}{y}$$
+            <p>Multiply both sides by $y$:</p>
+            $$y \cdot \frac{dy}{dx} = -2x^2$$
+            <p>Multiply both sides by $dx$ (integration shorthand):</p>
+            $$y \, dy = -2x^2 \, dx$$
+            <p>Integrate both sides:</p>
+            $$\int y \, dy = \int -2x^2 \, dx$$
+            $$\frac{y^2}{2} = -\frac{2x^3}{3} + C$$
+            <p>Multiply by 2:</p>
+            $$y^2 = -\frac{4x^3}{3} + K \quad \text{(where } K = 2C\text{)}$$
+        </div>
+
+        <div class="solution-step">
+            <h4>Apply Initial Condition $f(1) = -1$:</h4>
+            $$(-1)^2 = -\frac{4(1)^3}{3} + K$$
+            $$1 = -\frac{4}{3} + K$$
+            $$K = 1 + \frac{4}{3} = \frac{3}{3} + \frac{4}{3} = \frac{7}{3}$$
+            
+            <p style="margin-top: 15px;">So:</p>
+            $$y^2 = -\frac{4x^3}{3} + \frac{7}{3} = \frac{7 - 4x^3}{3}$$
+        </div>
+
+        <div class="math-display">
+            <h4>Solve for $y$:</h4>
+            $$y = \pm\sqrt{\frac{7 - 4x^3}{3}}$$
+            <p>Since $f(1) = -1$ is <strong>negative</strong>, we use the negative root:</p>
+            $$f(x) = -\sqrt{\frac{7 - 4x^3}{3}}$$
+        </div>
+
+        <div class="concept-box">
+            <h3>The Big Conceptual Leap</h3>
+            <p>When you have $y$ in the differential equation:</p>
+            <ol>
+                <li>You integrate <strong>with respect to $y$</strong> on one side</li>
+                <li>This gives you $\frac{y^2}{2}$, not just $y$</li>
+                <li>You get an <strong>implicit solution</strong> ($y^2 = \text{something}$)</li>
+                <li>You must solve for $y$ explicitly</li>
+                <li>The $\pm$ means two solutions — initial condition picks which one</li>
+            </ol>
+        </div>
+
+        <div class="insight">
+            <strong>Why does this work?</strong> $\int y \, dy$ means: "What function, when differentiated with respect to $y$, gives $y$?" Answer: $\frac{y^2}{2}$ (plus constant).
+        </div>
+
+        <!-- PROBLEM 4 -->
+        <div class="problem">
+            <div class="problem-header">Problem 4: Slope Fields for $\frac{dy}{dx} = \frac{y-1}{x+y}$</div>
+        </div>
+
+        <h3>Part (A): Sketch the Slope Field</h3>
+
+        <div class="concept-box">
+            <h3>Understanding Slope Fields Conceptually</h3>
+            <p>A slope field is a <strong>visual representation of ALL possible solutions</strong> at once.</p>
+            <p>At each grid point $(x, y)$:</p>
+            <ul>
+                <li>Calculate $\frac{dy}{dx} = \frac{y-1}{x+y}$</li>
+                <li>Draw a tiny line segment with that slope</li>
+                <li><strong>Don't connect the segments!</strong></li>
+            </ul>
+        </div>
+
+        <div class="key-point">
+            <strong>Strategic Approach:</strong> Instead of calculating 50 slopes, look for PATTERNS!
+        </div>
+
+        <div class="math-display">
+            <h4>Find Key Features:</h4>
+            
+            <p><strong>1. Where is slope ZERO (horizontal segments)?</strong></p>
+            $$\frac{y-1}{x+y} = 0 \implies y - 1 = 0 \implies y = 1$$
+            <p style="color: #0066cc; font-weight: 600;">Along the line $y = 1$, all slopes are horizontal.</p>
+            
+            <p><strong>2. Where is slope UNDEFINED (vertical segments)?</strong></p>
+            <p>Division by zero when:</p>
+            $$x + y = 0 \implies y = -x$$
+            <p style="color: #0066cc; font-weight: 600;">Along the line $y = -x$, slopes are vertical (undefined).</p>
+            
+            <p><strong>3. Where is slope = 1 (diagonal at 45°)?</strong></p>
+            $$\frac{y-1}{x+y} = 1$$
+            $$y - 1 = x + y$$
+            $$-1 = x \implies x = -1$$
+            <p style="color: #0066cc; font-weight: 600;">Along the line $x = -1$, all slopes equal 1.</p>
+        </div>
+
+        <div class="solution-step">
+            <h4>Sample Calculations (for verification):</h4>
+            <ul>
+                <li>$(0, 0)$: slope $= \frac{0-1}{0+0} = \frac{-1}{0}$ = undefined ✓ (on $y=-x$ line)</li>
+                <li>$(0, 2)$: slope $= \frac{2-1}{0+2} = \frac{1}{2}$</li>
+                <li>$(1, 1)$: slope $= \frac{1-1}{1+1} = 0$ ✓ (on $y=1$ line)</li>
+                <li>$(-1, 0)$: slope $= \frac{0-1}{-1+0} = 1$ ✓ (on $x=-1$ line)</li>
+            </ul>
+        </div>
+
+        <div class="insight">
+            The slope field shows the <strong>"flow"</strong> of the differential equation. Solution curves must be <strong>tangent to the field at EVERY point</strong>. You can visualize solutions by following the flow with your eye.
+        </div>
+
+        <h3>Part (B): Find Horizontal Line $y = c$</h3>
+
+        <div class="key-point">
+            <strong>Translation:</strong> Find where $\frac{dy}{dx} = 0$ for ALL $x$.
+        </div>
+
+        <div class="math-display">
+            $$\frac{y-1}{x+y} = 0$$
+            <p>For a fraction to equal zero, the numerator must be zero:</p>
+            $$y - 1 = 0 \implies y = 1$$
+            <p style="margin-top: 15px; font-size: 1.2em; color: #0066cc;"><strong>Answer: $c = 1$</strong></p>
+        </div>
+
+        <div class="concept-box">
+            <h3>Deeper Meaning: Equilibrium Solutions</h3>
+            <p>This is an <strong>equilibrium solution</strong> (also called a <strong>particular solution</strong>):</p>
+            <ul>
+                <li>If $y$ starts at 1, then $\frac{dy}{dx} = 0$, so $y$ never changes</li>
+                <li>It's a <strong>stable state</strong></li>
+                <li>Also called a "constant solution"</li>
+            </ul>
+            <p><strong>Why is this special?</strong> Most solutions are CURVES. This solution is a straight horizontal line — nothing ever changes along it.</p>
+        </div>
+
+        <!-- PROBLEM 6 -->
+        <div class="problem">
+            <div class="problem-header">Problem 6: Logistic Growth Model</div>
+            <p><strong>Given:</strong> $\frac{dP}{dt} = \frac{2}{5000}P(5000 - P)$ with $P(0) = 3000$</p>
+        </div>
+
+        <div class="concept-box">
+            <h3>Understanding Logistic Growth DEEPLY</h3>
+            <p><strong>Why this equation exists:</strong> Real populations don't grow exponentially forever. They hit limits (food, space, resources). The logistic model captures this reality.</p>
+        </div>
+
+        <div class="math-display">
+            <h4>Breaking Down the Equation:</h4>
+            $$\frac{dP}{dt} = \underbrace{\frac{2}{5000}P}_{\text{growth rate}} \cdot \underbrace{(5000 - P)}_{\text{limiting factor}}$$
+            
+            <h4 style="margin-top: 20px;">What Each Part Means:</h4>
+            <table>
+                <tr>
+                    <th>Component</th>
+                    <th>Meaning</th>
+                </tr>
+                <tr>
+                    <td>$P$ term</td>
+                    <td>Growth proportional to population (more individuals → more reproduction)</td>
+                </tr>
+                <tr>
+                    <td>$(5000 - P)$ term</td>
+                    <td>When $P$ is small: $(5000-P) \approx 5000$ (almost exponential)<br>
+                        When $P \to 5000$: $(5000-P) \to 0$ (growth stops)<br>
+                        When $P > 5000$: $(5000-P) < 0$ (population decreases!)</td>
+                </tr>
+                <tr>
+                    <td>$K = 5000$</td>
+                    <td><strong>Carrying capacity</strong> (maximum sustainable population)</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="key-point">
+            <h4>Behavior Analysis:</h4>
+            <ul>
+                <li>$P = 0$: $\frac{dP}{dt} = 0$ (no population, no growth)</li>
+                <li>$0 < P < 5000$: $\frac{dP}{dt} > 0$ (growing)</li>
+                <li>$P = 5000$: $\frac{dP}{dt} = 0$ (equilibrium reached)</li>
+                <li>$P > 5000$: $\frac{dP}{dt} < 0$ (declining back to 5000)</li>
+            </ul>
+        </div>
+
+        <div class="math-display">
+            <h4>The Solution (General Form):</h4>
+            $$P(t) = \frac{K}{1 + Ae^{-rt}}$$
+            <p>Where:</p>
+            <ul>
+                <li>$K$ = carrying capacity (5000)</li>
+                <li>$r$ = growth rate (extracted from coefficient)</li>
+                <li>$A$ = determined by initial condition $P(0) = 3000$</li>
+            </ul>
+        </div>
+
+        <div class="insight">
+            <strong>Conceptual Beauty:</strong> The graph of $P(t)$ is an <strong>S-curve</strong>:
+            <ul>
+                <li>Starts slow (few individuals)</li>
+                <li>Accelerates (exponential-like growth)</li>
+                <li>Levels off (approaching carrying capacity)</li>
+            </ul>
+            This models: bacterial growth, viral spread, technology adoption, rumor spreading!
+        </div>
+
+        <!-- PROBLEM 7 -->
+        <div class="problem">
+            <div class="problem-header">Problem 7: Particle Motion — The Integration Chain</div>
+            <p><strong>Given:</strong></p>
+            <ul>
+                <li>Acceleration: $a(t) = \frac{1}{\sqrt{t}}$ for $t > 0$</li>
+                <li>Velocity at $t = 4$: $v(4) = -0.1$ m/s</li>
+                <li>Position at $t = 4$: $h(4) = $ [value from worksheet]</li>
+                <li>Initial position: $h(0) = 8$</li>
+            </ul>
+        </div>
+
+        <div class="concept-box">
+            <h3>Understanding the Position-Velocity-Acceleration Relationship</h3>
+            <div style="text-align: center; font-size: 1.2em; margin: 20px 0;">
+                <strong>The Derivative Chain:</strong><br><br>
+                Position $h(t)$ $\xrightarrow{\text{differentiate}}$ Velocity $v(t) = h'(t)$ $\xrightarrow{\text{differentiate}}$ Acceleration $a(t) = v'(t) = h''(t)$
+                <br><br>
+                <strong>To solve, we INTEGRATE backwards:</strong><br><br>
+                Acceleration $a(t)$ $\xleftarrow{\text{integrate}}$ Velocity $v(t)$ $\xleftarrow{\text{integrate}}$ Position $h(t)$
+            </div>
+        </div>
+
+        <div class="solution-step">
+            <h4>Step 1: Find Velocity $v(t)$</h4>
+            <div class="math-display">
+                $$a(t) = \frac{1}{\sqrt{t}} = t^{-1/2}$$
+                $$v(t) = \int t^{-1/2} \, dt$$
+                <p>Using power rule: $\int t^n \, dt = \frac{t^{n+1}}{n+1} + C$</p>
+                $$v(t) = \frac{t^{1/2}}{1/2} + C_1 = 2t^{1/2} + C_1 = 2\sqrt{t} + C_1$$
+            </div>
+            
+            <p><strong>Apply condition $v(4) = -0.1$:</strong></p>
+            <div class="math-display">
+                $$-0.1 = 2\sqrt{4} + C_1$$
+                $$-0.1 = 2(2) + C_1$$
+                $$-0.1 = 4 + C_1$$
+                $$C_1 = -4.1$$
+                
+                <p style="margin-top: 15px; color: #0066cc; font-weight: 600;">Therefore: $v(t) = 2\sqrt{t} - 4.1$</p>
+            </div>
+        </div>
+
+        <div class="solution-step">
+            <h4>Step 2: Find Position $h(t)$</h4>
+            <div class="math-display">
+                $$v(t) = 2\sqrt{t} - 4.1 = 2t^{1/2} - 4.1$$
+                $$h(t) = \int (2t^{1/2} - 4.1) \, dt$$
+                $$h(t) = 2 \cdot \frac{t^{3/2}}{3/2} - 4.1t + C_2$$
+                $$h(t) = 2 \cdot \frac{2}{3}t^{3/2} - 4.1t + C_2$$
+                $$h(t) = \frac{4}{3}t^{3/2} - 4.1t + C_2$$
+            </div>
+            
+            <p><strong>Apply condition $h(4) = $ [value]:</strong></p>
+            <div class="math-display">
+                $$[\text{value}] = \frac{4}{3}(4)^{3/2} - 4.1(4) + C_2$$
+                $$[\text{value}] = \frac{4}{3}(8) - 16.4 + C_2$$
+                $$[\text{value}] = \frac{32}{3} - 16.4 + C_2$$
+                $$[\text{value}] = 10.67 - 16.4 + C_2$$
+                <p>Solve for $C_2$...</p>
+            </div>
+            
+            <p><strong>Then verify with $h(0) = 8$</strong> (or use this as the condition instead).</p>
+        </div>
+
+        <div class="concept-box">
+            <h3>The Deep Concept: Why Two Constants?</h3>
+            <ul>
+                <li>Each integration adds ONE arbitrary constant</li>
+                <li>We integrated TWICE ($a \to v \to h$), so TWO constants</li>
+                <li>We need TWO initial conditions to determine both constants</li>
+            </ul>
+            
+            <h4 style="color: white; margin-top: 15px;">Physical Meaning:</h4>
+            <ul>
+                <li>$C_1$ in velocity: <strong>initial velocity</strong> (how fast you start)</li>
+                <li>$C_2$ in position: <strong>initial position</strong> (where you start)</li>
+            </ul>
+        </div>
+
+        <div class="visual-analogy">
+            <strong>Real-World Analogy:</strong> If I tell you a car's acceleration, you can't know where it is without knowing:
+            <ol>
+                <li>How fast it was going initially (determines velocity constant)</li>
+                <li>Where it started (determines position constant)</li>
+            </ol>
+        </div>
+
+        <!-- PROBLEM 10 -->
+        <div class="problem">
+            <div class="problem-header">Problem 10: Slope Field Matching — $\frac{dP}{dt} = -6\cos(t)$</div>
+        </div>
+
+        <h3>Part (A): Which Slope Field?</h3>
+
+        <div class="key-point">
+            <h4>Analyze the Equation:</h4>
+            <p style="font-size: 1.1em;">$$\frac{dP}{dt} = -6\cos(t)$$</p>
+            
+            <p><strong>Key Observation #1:</strong> Depends only on $t$, NOT on $P$</p>
+            <p style="margin-left: 20px;">→ Slope is the SAME for all $P$ at a given $t$<br>
+            → Slopes should form HORIZONTAL BANDS (same slope in vertical columns)</p>
+        </div>
+
+        <div class="math-display">
+            <h4>Behavior with $t$:</h4>
+            <table>
+                <tr>
+                    <th>$t$ value</th>
+                    <th>$\frac{dP}{dt}$</th>
+                    <th>Slope Direction</th>
+                </tr>
+                <tr>
+                    <td>$t = 0$</td>
+                    <td>$-6\cos(0) = -6(1) = -6$</td>
+                    <td>Negative, steep down</td>
+                </tr>
+                <tr>
+                    <td>$t = \frac{\pi}{2}$</td>
+                    <td>$-6\cos(\frac{\pi}{2}) = -6(0) = 0$</td>
+                    <td>Horizontal</td>
+                </tr>
+                <tr>
+                    <td>$t = \pi$</td>
+                    <td>$-6\cos(\pi) = -6(-1) = 6$</td>
+                    <td>Positive, steep up</td>
+                </tr>
+                <tr>
+                    <td>$t = \frac{3\pi}{2}$</td>
+                    <td>$-6\cos(\frac{3\pi}{2}) = -6(0) = 0$</td>
+                    <td>Horizontal</td>
+                </tr>
+                <tr>
+                    <td>$t = 2\pi$</td>
+                    <td>$-6\cos(2\pi) = -6(1) = -6$</td>
+                    <td>Negative (cycle repeats)</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="key-point">
+            <h4>Look for a slope field with:</h4>
+            <ul>
+                <li>✓ Vertical consistency (same slope in each column)</li>
+                <li>✓ Oscillating pattern following $-\cos(t)$</li>
+                <li>✓ Starting with negative slopes</li>
+                <li>✓ Crossing zero at $t = \frac{\pi}{2}$</li>
+            </ul>
+        </div>
+
+        <h3>Part (B): Solve the Differential Equation</h3>
+
+        <div class="math-display">
+            $$\frac{dP}{dt} = -6\cos(t)$$
+            <p>Integrate both sides:</p>
+            $$P(t) = \int -6\cos(t) \, dt$$
+            $$P(t) = -6\sin(t) + C$$
+        </div>
+
+        <div class="insight">
+            <strong>Graph Characteristics:</strong>
+            <ul>
+                <li>Sine wave (shifted/scaled)</li>
+                <li>Amplitude: 6</li>
+                <li>Starts at $P = C$ (when $t = 0$, since $\sin(0) = 0$)</li>
+                <li>Oscillates between $C - 6$ and $C + 6$</li>
+            </ul>
+        </div>
+
+        <!-- KEY SYNTHESIS -->
+        <h2 style="margin-top: 50px;">Key Conceptual Synthesis</h2>
+
+        <div class="concept-box">
+            <h3>1. Separation of Variables — The Deep Truth</h3>
+            <p>When we "multiply by $dx$," we're really using:</p>
+            <div class="math-display">
+                $$\frac{dy}{dx} = f(x)g(y)$$
+                <p>↓ (Rewrite using differentials)</p>
+                $$\frac{1}{g(y)} dy = f(x) dx$$
+                <p>↓ (Integrate both sides)</p>
+                $$\int \frac{1}{g(y)} \, dy = \int f(x) \, dx$$
+            </div>
+            <p>The left side integrates with respect to $y$, right with respect to $x$.</p>
+        </div>
+
+        <div class="concept-box">
+            <h3>2. Initial Conditions — Why We Need Them</h3>
+            <ul>
+                <li><strong>General solution:</strong> Has arbitrary constant(s) — represents a FAMILY of functions</li>
+                <li><strong>Particular solution:</strong> Uses initial condition to pin down ONE specific function</li>
+                <li><strong>Integration chain:</strong> $n$ integrations need $n$ conditions</li>
+            </ul>
+        </div>
+
+        <div class="concept-box">
+            <h3>3. Slope Fields — Visual Power</h3>
+            <ul>
+                <li>Shows ALL solutions simultaneously</li>
+                <li>Solution curves are always tangent to the field</li>
+                <li>Equilibrium solutions are where slope = 0 everywhere</li>
+                <li>Can predict solution behavior without solving</li>
+            </ul>
+        </div>
+
+        <div class="concept-box">
+            <h3>4. Euler's Method — Numerical Approximation</h3>
+            <ul>
+                <li>When you CAN'T solve exactly, approximate numerically</li>
+                <li>Trade-off: smaller steps = more accurate, more work</li>
+                <li>Error accumulates — each step compounds previous errors</li>
+                <li>Foundation of computational differential equations</li>
+            </ul>
+        </div>
+
+        <div class="concept-box">
+            <h3>5. Models in the Real World</h3>
+            <table>
+                <tr>
+                    <th>Model</th>
+                    <th>Equation</th>
+                    <th>Application</th>
+                </tr>
+                <tr>
+                    <td>Exponential</td>
+                    <td>$\frac{dP}{dt} = kP$</td>
+                    <td>Unlimited growth</td>
+                </tr>
+                <tr>
+                    <td>Logistic</td>
+                    <td>$\frac{dP}{dt} = kP(M-P)$</td>
+                    <td>Growth with carrying capacity</td>
+                </tr>
+                <tr>
+                    <td>Newton's Cooling</td>
+                    <td>$\frac{dT}{dt} = k(T-T_a)$</td>
+                    <td>Temperature equilibration</td>
+                </tr>
+                <tr>
+                    <td>Motion</td>
+                    <td>$a(t) \to v(t) \to s(t)$</td>
+                    <td>Physics fundamentals</td>
+                </tr>
+            </table>
+            <p style="margin-top: 15px;">These equations MODEL reality — they're powerful because they describe CHANGE.</p>
+        </div>
+
+        <div class="insight" style="margin-top: 40px; font-size: 1.1em;">
+            <strong>Practice Mindset:</strong> When you see a differential equation, ask yourself:
+            <ol>
+                <li>What TYPE is this? (separable, logistic, linear, etc.)</li>
+                <li>What does it MEAN? (What's changing? Why?)</li>
+                <li>What METHOD do I use? (separate, integrate, substitute?)</li>
+                <li>What will the SOLUTION look like? (oscillating, growing, stable?)</li>
+                <li>How does the INITIAL CONDITION matter?</li>
+            </ol>
+            <p style="margin-top: 15px; font-weight: 700; color: #c53030;">Don't just solve mechanically — understand the story the equation tells.</p>
+        </div>
+
+    </div>
+</body>
+</html>
